@@ -32,11 +32,15 @@ with open("total_url_list.txt", "w") as f:
 f.close()
 print(f"List of all URLs saved to 'url_list.txt'\n")
 
+# creath vars for data paths
+zip_path = "zip_data/"
+raw_path = "raw_data/"
+
 # check which zips are not downloaded, add them to list variable
 urls_to_download = []
 for url in total_urls:
-    zip_path = Path("zips/" + str(url[0]))
-    if zip_path.exists() != True:
+    check_zip_path = Path(zip_path + str(url[0]))
+    if check_zip_path.exists() != True:
         urls_to_download.append(url)
 
 # are there new downloads?
@@ -56,32 +60,30 @@ if len(urls_to_download) > 0:
     if user_conf == "yes":
         print("Starting download")
         # create zips folder
-        path = "zips"
         try:
-            os.makedirs(path, exist_ok = True)
-            print(f".zips will be saved to '{path}' directory\n")
+            os.makedirs(zip_path, exist_ok = True)
+            print(f".zips will be saved to '{zip_path}' directory\n")
         except OSError as error:
-            print(f"ERROR, {path} not created")
+            print(f"ERROR, '{zip_path}' not created")
         # download zips
         for url in urls_to_download:
-            urllib.request.urlretrieve(url[1], path + "/" + url[0])
+            urllib.request.urlretrieve(url[1], zip_path + url[0])
             print(f"Downloaded: {url[0]}")
         print("\nDownload finished!\n")
         # begin unzip process
         print("Starting unzip process")
         # create unzips folder
-        path = "data"
         try:
-            os.makedirs(path, exist_ok = True)
-            print(f".zips will be unzipped to '{path}' directory\n")
+            os.makedirs(raw_path, exist_ok = True)
+            print(f".zips will be unzipped to '{raw_path}' directory\n")
         except OSError as error:
-            print(f"ERROR, {path} not created")
+            print(f"ERROR, '{raw_path}' not created")
         # unzip the zips, prepare to encode
         to_encode = []
         for url in urls_to_download:
-            with zipfile.ZipFile("zips/" + url[0], "r") as zfile:
+            with zipfile.ZipFile(zip_path + url[0], "r") as zfile:
                 to_encode += zfile.namelist()
-                zfile.extractall("data/")
+                zfile.extractall(raw_path)
             f.close()
             print("Unzipped: " + url[0])
         print("\nUnzip finished!\n")
@@ -89,10 +91,10 @@ if len(urls_to_download) > 0:
         print("Starting re-encode process\n")
         for i in to_encode:
             print(f"Encoding: {i}")
-            with open(f"data/{i}", "r", encoding="iso8859_14") as f:
+            with open(f"{raw_path}{i}", "r", encoding="iso8859_14") as f:
                 data = f.read()
             f.close()
-            with open(f"data/{i}", "w", encoding="utf8") as f:
+            with open(f"{raw_path}{i}", "w", encoding="utf8") as f:
                 f.write(data)
             f.close()
         print("\nEncoding finished!")
