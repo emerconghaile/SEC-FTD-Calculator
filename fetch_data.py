@@ -33,8 +33,8 @@ f.close()
 print(f"List of all URLs saved to 'url_list.txt'\n")
 
 # creath vars for data paths
-zip_path = "zip_data/"
-raw_path = "raw_data/"
+zip_path = "og/zip_data/"
+raw_path = "og/raw_data/"
 
 # check which zips are not downloaded, add them to list variable
 urls_to_download = []
