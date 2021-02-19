@@ -1,5 +1,7 @@
 total_url_list.txt
 new_url_list.txt
 og
+sum_tickers
 processed
 .vscode
+__pycache__
